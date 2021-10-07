@@ -45,7 +45,7 @@ router.post(
         tag,
       });
       const savedNote = await note.save();
-      res.json(savedNote);
+      res.status(200).json(savedNote);
     } catch (error) {
       console.log(`error is: ${error.message}`);
       res.status(500).json({
@@ -88,7 +88,7 @@ router.put("/updatenote/:id", fetchuser, async (req, res) => {
       { new: true }
     );
 
-    res.json(note);
+    res.status(200).json(note);
   } catch (error) {
     console.log(`error is: ${error.message}`);
     res.status(500).json({
@@ -113,7 +113,7 @@ router.delete("/deletenote/:id", fetchuser, async (req, res) => {
     }
     note = await Notes.findByIdAndDelete(req.params.id);
 
-    res.json({message:"Deletion Success",note: note});
+    res.json({ message: "Deletion Success", note: note });
   } catch (error) {
     console.log(`error is: ${error.message}`);
     res.status(500).json({
