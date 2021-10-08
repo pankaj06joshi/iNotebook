@@ -1,13 +1,19 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
+import { useHistory } from "react-router";
 import noteContext from "../context/notes/noteContext";
 import AddNote from "./AddNote";
 import NoteItem from "./NoteItem";
 
-const Notes = () => {
+const Notes = (props) => {
+  const history = useHistory();
   const context = useContext(noteContext);
   const { notes, fetchAllNotes, editNote } = context;
   useEffect(() => {
-    fetchAllNotes();
+    if(localStorage.getItem("token")){
+      fetchAllNotes();
+    } else {
+      history.push("/login")
+    }
     // eslint-disable-next-line
   }, []);
 
@@ -35,6 +41,7 @@ const Notes = () => {
     // console.log("updating a note..", note);
     editNote(note.id, note.etitle, note.edescription, note.etag);
     refClose.current.click();
+    props.showAlert("Note is Updated", "success");
   };
 
   const onChange = (e) => {
@@ -43,7 +50,7 @@ const Notes = () => {
 
   return (
     <>
-      <AddNote />
+      <AddNote showAlert={props.showAlert} />
 
       <button
         ref={ref}
@@ -133,7 +140,9 @@ const Notes = () => {
                 Close
               </button>
               <button
-                disabled={note.etitle.length < 3 || note.edescription.length < 5}
+                disabled={
+                  note.etitle.length < 3 || note.edescription.length < 5
+                }
                 type="button"
                 className="btn btn-primary"
                 onClick={handleClick}
@@ -152,7 +161,12 @@ const Notes = () => {
         </div>
         {notes.map((note) => {
           return (
-            <NoteItem key={note._id} note={note} updateNote={updateNote} />
+            <NoteItem
+              key={note._id}
+              note={note}
+              updateNote={updateNote}
+              showAlert={props.showAlert}
+            />
           );
         })}
       </div>
